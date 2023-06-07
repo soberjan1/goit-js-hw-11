@@ -1,5 +1,8 @@
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
 
+import { SimpleLightbox } from 'simplelightbox';
+import 'simplelightbox/dist/simple-lightbox.min.css';
+
 const refs = {
   formEl: document.querySelector('.search-form'),
   inputEl: document.querySelector('[name="searchQuery"]'),
@@ -22,13 +25,15 @@ async function fetchImg(searchQuery) {
   return response.json();
 }
 
-refs.loadMoreBtn.addEventListener('click', handleLoadMoreBtn);
+refs.loadMoreBtn.style.display = 'none';
 refs.formEl.addEventListener('submit', handleSubmit);
+refs.loadMoreBtn.addEventListener('click', handleLoadMoreBtn);
 
 function handleSubmit(evt) {
   evt.preventDefault();
+  searchQuery = evt.currentTarget.elements.searchQuery.value;
   refs.galleryDivEl.innerHTML = '';
-  refs.btnLoadMore.style.display = 'none';
+  refs.loadMoreBtn.style.display = 'none';
   page = 1;
 
   fetchImg(searchQuery)
@@ -45,6 +50,42 @@ function handleSubmit(evt) {
     .catch(error => console.log(error));
 }
 
-function handleLoadMoreBtn() {
-  console.log('jopa');
+function renderMarkupCard(data) {
+  const addImg = data.hits
+    .map(img => {
+      return `<div class="photo-card">
+  <a href="${img.largeImageURL}"><img src="${img.webformatURL}" alt="${img.tags}" loading="lazy" width='300' height='200' /></a>
+  <div class="info">
+    <p class="info-item">
+      <b>Likes</b> - ${img.likes}
+    </p>
+    <p class="info-item">
+      <b>Views</b> - ${img.views}
+    </p>
+    <p class="info-item">
+      <b>Comments</b> - ${img.comments}
+    </p>
+    <p class="info-item">
+      <b>Downloads</b> - ${img.downloads}
+    </p>
+  </div>
+</div>`;
+    })
+    .join('');
+  refs.galleryDivEl.insertAdjacentHTML('beforeend', addImg);
 }
+
+function handleLoadMoreBtn() {
+  fetchImg(searchQuery).then(data => {
+    page += 1;
+    renderMarkupCard(data);
+    if (data.totalHits <= page * 40) {
+      Notify.failure(
+        "We're sorry, but you've reached the end of search results."
+      );
+      refs.btnLoadMore.style.display = 'none';
+    }
+  });
+}
+
+var lightbox = new SimpleLightbox('.gallery a', {});
