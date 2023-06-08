@@ -40,11 +40,14 @@ function handleSubmit(evt) {
     .then(data => {
       renderMarkupCard(data);
       refs.loadMoreBtn.style.display = 'block';
-      Notify.success(`Ura, mi nashli ${data.totalHits} kartinok`);
+
       if (data.hits.length === 0) {
         Notify.failure(
           'Sorry, there are no images matching your search query. Please try again.'
         );
+        refs.loadMoreBtn.style.display = 'none';
+      } else {
+        Notify.success(`Ura, mi nashli ${data.totalHits} kartinok`);
       }
     })
     .catch(error => console.log(error));
@@ -88,4 +91,4 @@ function handleLoadMoreBtn() {
   });
 }
 
-var lightbox = new SimpleLightbox('.gallery a', {});
+// var lightbox = new SimpleLightbox('.gallery a');
