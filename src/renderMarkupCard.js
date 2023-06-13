@@ -1,6 +1,4 @@
-export { renderMarkupCard };
-
-function renderMarkupCard(data) {
+export default function renderMarkupCard(data) {
   const addImg = data.hits
     .map(img => {
       return `<div class="photo-card">

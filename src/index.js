@@ -1,4 +1,5 @@
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
+import renderMarkupCard from './renderMarkupCard';
 
 import { SimpleLightbox } from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
@@ -53,30 +54,7 @@ function handleSubmit(evt) {
     .catch(error => console.log(error));
 }
 
-function renderMarkupCard(data) {
-  const addImg = data.hits
-    .map(img => {
-      return `<div class="photo-card">
-  <a href="${img.largeImageURL}"><img src="${img.webformatURL}" alt="${img.tags}" loading="lazy" width='300' height='200' /></a>
-  <div class="info">
-    <p class="info-item">
-      <b>Likes</b> - ${img.likes}
-    </p>
-    <p class="info-item">
-      <b>Views</b> - ${img.views}
-    </p>
-    <p class="info-item">
-      <b>Comments</b> - ${img.comments}
-    </p>
-    <p class="info-item">
-      <b>Downloads</b> - ${img.downloads}
-    </p>
-  </div>
-</div>`;
-    })
-    .join('');
-  refs.galleryDivEl.insertAdjacentHTML('beforeend', addImg);
-}
+renderMarkupCard(data);
 
 function handleLoadMoreBtn() {
   fetchImg(searchQuery).then(data => {
